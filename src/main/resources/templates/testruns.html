@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>TestRuns</title>
+</head>
+<body>
+
+<h1>TestRuns</h1>
+
+<form th:action="@{/testruns}" th:object="${testrun}" method="post">
+
+    Name: <input type="text" th:field="*{name}" /><br>
+    Date: <input type="date" th:field="*{date}" /><br>
+    Tester: <input type="text" th:field="*{tester}" /><br>
+
+    Status:
+    <select th:field="*{status}">
+        <option th:each="s : ${T(com.require4testing.entity.Status).values()}"
+                th:value="${s}"
+                th:text="${s}">
+        </option>
+    </select>
+    <br><br>
+
+    <button type="submit">Save</button>
+</form>
+
+<hr>
+
+<h2>List</h2>
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Date</th>
+        <th>Tester</th>
+        <th>Status</th>
+    </tr>
+
+    <tr th:each="t : ${testruns}">
+        <td th:text="${t.name}"></td>
+        <td th:text="${t.date}"></td>
+        <td th:text="${t.tester}"></td>
+
+        <!-- PRO LEVEL Anzeige -->
+        <td>
+            <span th:if="${t.status.name() == 'OPEN'}">OPEN</span>
+            <span th:if="${t.status.name() == 'IN_PROGRESS'}">IN PROGRESS</span>
+            <span th:if="${t.status.name() == 'DONE'}">DONE</span>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>TestExecutions</title>
+</head>
+<body>
+
+<h1>Test Executions</h1>
+
+<form th:action="@{/executions}" th:object="${execution}" method="post">
+
+    TestRun:
+    <select th:field="*{testRun}">
+        <option th:each="tr : ${testruns}"
+                th:value="${tr}"
+                th:text="${tr.name}">
+        </option>
+    </select>
+
+    <br><br>
+
+    TestCase:
+    <select th:field="*{testCase}">
+        <option th:each="tc : ${testcases}"
+                th:value="${tc}"
+                th:text="${tc.title}">
+        </option>
+    </select>
+
+    <br><br>
+
+    Result:
+    <select th:field="*{result}">
+        <option value="PASS">PASS</option>
+        <option value="FAIL">FAIL</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">Save</button>
+</form>
+
+<hr>
+
+<h2>List</h2>
+
+<table border="1">
+    <tr>
+        <th>TestRun</th>
+        <th>TestCase</th>
+        <th>Result</th>
+    </tr>
+
+    <tr th:each="e : ${executions}">
+        <td th:text="${e.testRun.name}"></td>
+        <td th:text="${e.testCase.title}"></td>
+        <td th:text="${e.result}"></td>
+    </tr>
+</table>
+
+</body>
+</html>

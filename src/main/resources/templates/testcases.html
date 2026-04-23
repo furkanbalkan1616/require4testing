@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>TestCases</title>
+</head>
+<body>
+
+<h1>TestCases</h1>
+
+<form th:action="@{/testcases}" th:object="${testcase}" method="post">
+
+    Title: <input type="text" th:field="*{title}" /><br>
+    Description: <input type="text" th:field="*{description}" /><br>
+    Expected Result: <input type="text" th:field="*{expectedResult}" /><br>
+
+    Requirement:
+    <select th:field="*{requirement}">
+        <option th:each="r : ${requirements}"
+                th:value="${r}"
+                th:text="${r.title}">
+        </option>
+    </select>
+
+    <br><br>
+    <button type="submit">Save</button>
+</form>
+
+<hr>
+
+<h2>List</h2>
+
+<table border="1">
+    <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Expected</th>
+        <th>Requirement</th>
+    </tr>
+
+    <tr th:each="t : ${testcases}">
+        <td th:text="${t.title}"></td>
+        <td th:text="${t.description}"></td>
+        <td th:text="${t.expectedResult}"></td>
+        <td th:text="${t.requirement.title}"></td>
+    </tr>
+</table>
+
+</body>
+</html>
