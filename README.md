@@ -1,34 +1,82 @@
 # 🧪 Require4Testing
 
-Require4Testing ist eine webbasierte Anwendung zur strukturierten Verwaltung von Anforderungen, Testfällen und Testläufen im Kontext des Softwaretestens.
+> Webbasierte Anwendung zur strukturierten Verwaltung manueller Softwaretests
 
-## 📌 Projektbeschreibung
+---
 
-Require4Testing ist eine prototypische Anwendung, die im Rahmen einer Fallstudie entwickelt wurde. Ziel ist es, den gesamten Testprozess – von der Definition einer Anforderung bis zur Durchführung und Auswertung von Testläufen – systematisch abzubilden.
+## 📌 Projektübersicht
 
-Die Anwendung unterstützt eine klare Nachvollziehbarkeit von Anforderungen und deren Validierung durch Testfälle und Testausführungen.
+**Require4Testing** ist eine prototypische Webanwendung zur Abbildung eines vollständigen Testprozesses im Softwaretesting.
+
+Die Anwendung ermöglicht die Verwaltung von:
+
+- Anforderungen (Requirements)  
+- Testfällen (TestCases)  
+- Testläufen (TestRuns)  
+- Testdurchführungen (Executions)  
+
+Ziel ist eine durchgängige Nachvollziehbarkeit von Anforderungen bis zur Testausführung und Auswertung.
+
+---
+
+## 🎯 Ziel des Projekts
+
+Das System bildet den gesamten Testprozess ab:
+
+Requirement → TestCase → TestRun → Execution
+
+Zusätzlich werden Testergebnisse im Dashboard ausgewertet.
+
+---
 
 ## 🚀 Funktionen
 
-- Verwaltung von Anforderungen (Requirements)  
-- Erstellung und Zuordnung von Testfällen (TestCases)  
-- Durchführung von Testläufen (TestRuns)  
-- Dokumentation von Testergebnissen (Executions)  
-- Übersicht über den aktuellen Teststatus (Dashboard)  
+### ✔ Requirements
+- Erstellung und Verwaltung von Anforderungen  
+- Priorisierung (MUST / SHOULD / COULD)
+
+### ✔ TestCases
+- Erstellung von Testfällen mit Beschreibung und Expected Result  
+- Zuordnung zu Anforderungen  
+
+### ✔ TestRuns
+- Planung von Testläufen  
+- Mehrfachzuordnung von Testfällen (n:m Beziehung)
+
+### ✔ Executions
+- Durchführung von Tests  
+- Verknüpfung von TestCase, TestRun und Tester  
+- Speicherung von Ergebnissen (PASSED, FAILED, BLOCKED)
+
+### ✔ Dashboard
+- Übersicht über:
+  - Gesamtanzahl Tests  
+  - Erfolgsquote  
+  - Passed / Failed  
+- Anzeige der letzten Testausführungen  
+
+---
 
 ## 🏗️ Architektur
 
-Die Anwendung basiert auf einer mehrschichtigen Architektur (Layered Architecture):
+Die Anwendung basiert auf einer mehrschichtigen Architektur:
 
-- Controller-Schicht zur Verarbeitung von Benutzeranfragen  
-- Service-Schicht zur Umsetzung der Geschäftslogik  
-- Persistenzschicht (Repository) für den Datenbankzugriff  
+- Controller Layer (Verarbeitung von Benutzeranfragen)  
+- Service Layer (Geschäftslogik und Validierung)  
+- Repository Layer (Datenbankzugriff mit JPA)  
 
-Zusätzlich werden Data Transfer Objects (DTOs) und Mapper verwendet, um eine klare Trennung zwischen interner Datenstruktur und Präsentationslogik zu gewährleisten.
+Zusätzlich verwendete Patterns:
 
-## 🗄️ Datenmodell
+- DTO Pattern  
+- Mapper Pattern  
+- Service Layer Pattern  
+- Exception Handling  
 
-Zentrale Entitäten der Anwendung:
+---
+
+## 🧠 Datenmodell
+
+Zentrale Entitäten:
 
 - Requirement  
 - TestCase  
@@ -36,47 +84,89 @@ Zentrale Entitäten der Anwendung:
 - Execution  
 - Tester  
 
-Der Testprozess wird wie folgt abgebildet:
+### Beziehungen:
 
-Requirement → TestCase → TestRun → Execution
+- Requirement → TestCase (1:n)  
+- TestCase ↔ TestRun (n:m)  
+- Execution verbindet TestCase, TestRun und Tester  
+- Tester → Execution (1:n)  
+
+---
 
 ## 🛠️ Technologien
 
-- Java / Spring Boot  
+- Java  
+- Spring Boot  
 - Spring Data JPA / Hibernate  
 - MySQL  
 - Thymeleaf  
 - Maven  
 
-## ⚙️ Installation & Ausführung
+---
 
-Repository klonen:  
-git clone https://github.com/furkanbalkan1616/require4testing.git  
+## ⚙️ Installation & Start
 
-Projekt öffnen und Anwendung starten:  
-mvn spring-boot:run  
+### Voraussetzungen:
+- Java 11+
+- Maven
+- MySQL
 
-Die Anwendung ist anschließend unter folgender Adresse erreichbar:  
-http://localhost:8080  
+### 1. Repository klonen
+
+git clone https://github.com/furkanbalkan1616/require4testing.git
+
+### 2. Datenbank erstellen
+
+CREATE DATABASE require4testing_db;
+
+### 3. Konfiguration
+
+application.properties anpassen:
+
+spring.datasource.url=jdbc:mysql://localhost:3306/require4testing_db  
+spring.datasource.username=USERNAME  
+spring.datasource.password=PASSWORD  
+
+### 4. Anwendung starten
+
+mvn spring-boot:run
+
+### 5. Zugriff
+
+http://localhost:8080
+
+---
+
+## 📸 Screenshots
+
+Die wichtigsten Funktionen sind in der Dokumentation enthalten.  
+
+---
 
 ## ⚠️ Einschränkungen
 
-- Kein Authentifizierungs- oder Rollensystem  
+- Kein Login- oder Rollensystem  
 - Keine automatisierten Tests  
-- Prototypische Umsetzung ohne Fokus auf Skalierbarkeit  
+- Fokus auf prototypische Umsetzung  
+
+---
 
 ## 🔮 Weiterentwicklung
 
-- Implementierung eines Login-Systems  
-- Einführung von Rollen und Berechtigungen  
-- Erweiterung um automatisierte Tests  
-- Verbesserung der Benutzeroberfläche  
+- Benutzer- und Rollenverwaltung  
+- Erweiterte Testauswertungen  
+- REST API  
+- Modernes UI  
+
+---
 
 ## 👨‍💻 Autor
 
 Furkan Balkan  
-Projekt im Rahmen einer IU-Fallstudie  
+Wirtschaftsinformatik – IU Internationale Hochschule  
+
+---
 
 ## 📄 Hinweis
 
-Dieses Projekt dient ausschließlich zu Lern- und Demonstrationszwecken.
+Dieses Projekt wurde im Rahmen einer Studienleistung entwickelt und dient Demonstrationszwecken.
