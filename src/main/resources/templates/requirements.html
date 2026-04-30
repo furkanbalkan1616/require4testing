@@ -1,34 +1,239 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+
 <head>
     <title>Requirements</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body.dark {
+            background-color: #121212;
+            color: white;
+        }
+
+        body.dark .card {
+            background-color: #1e1e1e;
+        }
+
+        body.dark .table {
+            color: white;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(8px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.01);
+            transition: 0.2s;
+        }
+    </style>
 </head>
-<body>
 
-<h1>Requirements</h1>
+<body class="bg-light fade-in" id="body">
 
-<form th:action="@{/requirements}" th:object="${requirement}" method="post">
-    Title: <input type="text" th:field="*{title}" /><br>
-    Description: <input type="text" th:field="*{description}" /><br>
-    Priority: <input type="text" th:field="*{priority}" /><br>
-    <button type="submit">Save</button>
-</form>
+<!-- 🔥 NAVBAR -->
+<nav class="navbar navbar-dark bg-dark px-3 shadow">
+    <a class="navbar-brand fw-bold" href="/dashboard">🚀 Require4Testing</a>
 
-<hr>
+    <div class="navbar-nav flex-row">
 
-<h2>List</h2>
-<table border="1">
-    <tr>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Priority</th>
-    </tr>
-    <tr th:each="r : ${requirements}">
-        <td th:text="${r.title}"></td>
-        <td th:text="${r.description}"></td>
-        <td th:text="${r.priority}"></td>
-    </tr>
-</table>
+        <!-- 🔥 NEU -->
+        <a class="nav-link text-white me-3" href="/dashboard">Dashboard</a>
+
+        <!-- 🔥 AKTIV -->
+        <a class="nav-link text-warning fw-bold me-3" href="/requirements">Requirements</a>
+
+        <a class="nav-link text-white me-3" href="/testcases">TestCases</a>
+        <a class="nav-link text-white me-3" href="/testruns">TestRuns</a>
+        <a class="nav-link text-white" href="/executions">Executions</a>
+    </div>
+
+    <div class="ms-auto">
+        <button onclick="toggleDark()" class="btn btn-outline-light btn-sm">🌙</button>
+    </div>
+</nav>
+
+<div class="container mt-4">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>📋 Requirements</h2>
+
+        <input type="text" id="search" class="form-control w-25"
+               placeholder="🔍 Suche..."
+               onkeyup="filterTable()">
+    </div>
+
+    <!-- ALERTS -->
+    <div th:if="${success == 'created'}" class="alert alert-success">
+        ✅ Erfolgreich gespeichert
+    </div>
+
+    <div th:if="${success == 'deleted'}" class="alert alert-success">
+        🗑 Erfolgreich gelöscht
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger">
+        ❌ Fehler aufgetreten
+    </div>
+
+    <!-- FORM -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+
+            <form th:action="@{/requirements}" th:object="${requirement}" method="post">
+
+                <div class="row g-2">
+
+                    <div class="col-md-4">
+                        <input th:field="*{title}" class="form-control" placeholder="Titel">
+                        <div class="text-danger small" th:errors="*{title}"></div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <input th:field="*{description}" class="form-control" placeholder="Beschreibung">
+                    </div>
+
+                    <div class="col-md-3">
+                        <select th:field="*{priority}" class="form-select">
+                            <option value="">Priorität wählen</option>
+                            <option th:each="p : ${priorities}"
+                                    th:value="${p}"
+                                    th:text="${p}">
+                            </option>
+                        </select>
+                        <div class="text-danger small" th:errors="*{priority}"></div>
+                    </div>
+
+                    <div class="col-md-1 d-grid">
+                        <button class="btn btn-success">💾</button>
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card shadow">
+        <div class="card-body">
+
+            <table class="table table-hover align-middle" id="table">
+
+                <thead class="table-light">
+                <tr>
+                    <th>Titel</th>
+                    <th>Beschreibung</th>
+                    <th>Priorität</th>
+                    <th class="text-end">Aktion</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <tr th:if="${#lists.isEmpty(requirements)}">
+                    <td colspan="4" class="text-center text-muted">
+                        Keine Requirements vorhanden
+                    </td>
+                </tr>
+
+                <tr th:each="r : ${requirements}">
+
+                    <td th:text="${r.title}"></td>
+                    <td th:text="${r.description}"></td>
+
+                    <td>
+                        <span class="badge"
+                              th:classappend="${r.priority.name() == 'MUSS'} ? 'bg-danger' :
+                                              (${r.priority.name() == 'SOLL'} ? 'bg-warning text-dark' :
+                                              'bg-secondary')"
+                              th:text="${r.priority}">
+                        </span>
+                    </td>
+
+                    <td class="text-end">
+                        <button class="btn btn-danger btn-sm"
+                                th:onclick="|confirmDelete(${r.id})|">
+                            🗑
+                        </button>
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Löschen?</h5>
+            </div>
+
+            <div class="modal-body">
+                Willst du dieses Requirement wirklich löschen?
+            </div>
+
+            <div class="modal-footer">
+
+                <form id="deleteForm" method="post">
+                    <button class="btn btn-danger">Ja, löschen</button>
+                </form>
+
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+    function filterTable() {
+        let input = document.getElementById("search").value.toLowerCase();
+        let rows = document.querySelectorAll("#table tbody tr");
+
+        rows.forEach(row => {
+            let text = row.innerText.toLowerCase();
+            row.style.display = text.includes(input) ? "" : "none";
+        });
+    }
+
+    function confirmDelete(id) {
+        let form = document.getElementById("deleteForm");
+        form.action = "/requirements/delete/" + id;
+
+        let modal = new bootstrap.Modal(document.getElementById("deleteModal"));
+        modal.show();
+    }
+
+    function toggleDark() {
+        document.getElementById("body").classList.toggle("dark");
+    }
+
+</script>
 
 </body>
 </html>

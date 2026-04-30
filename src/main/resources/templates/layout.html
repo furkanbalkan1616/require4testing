@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de"
+      th:fragment="layout(content)">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Require4Testing</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body.dark {
+            background-color: #121212;
+            color: white;
+        }
+
+        body.dark .card {
+            background-color: #1e1e1e;
+        }
+
+        body.dark .table {
+            color: white;
+        }
+
+        .nav-link {
+            transition: 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #ffc107 !important;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+
+<body class="bg-light" id="body">
+
+<!-- 🔥 NAVBAR -->
+<nav class="navbar navbar-dark bg-dark px-3 shadow d-flex align-items-center">
+
+    <!-- LOGO -->
+    <a class="navbar-brand fw-bold me-4" href="/dashboard">
+        🚀 Require4Testing
+    </a>
+
+    <!-- LINKS -->
+    <div class="d-flex align-items-center">
+
+        <a th:class="${activePage == 'requirements'} ? 'nav-link me-3 fw-bold text-warning' : 'nav-link me-3 text-white'"
+           href="/requirements">Requirements</a>
+
+        <a th:class="${activePage == 'testcases'} ? 'nav-link me-3 fw-bold text-warning' : 'nav-link me-3 text-white'"
+           href="/testcases">TestCases</a>
+
+        <a th:class="${activePage == 'testruns'} ? 'nav-link me-3 fw-bold text-warning' : 'nav-link me-3 text-white'"
+           href="/testruns">TestRuns</a>
+
+        <a th:class="${activePage == 'executions'} ? 'nav-link me-3 fw-bold text-warning' : 'nav-link me-3 text-white'"
+           href="/executions">Executions</a>
+
+        <!-- kleiner Abstand -->
+        <span class="text-white mx-2">|</span>
+
+        <!-- Dashboard am Ende -->
+        <a th:class="${activePage == 'dashboard'} ? 'nav-link fw-bold text-warning' : 'nav-link text-white'"
+           href="/dashboard">Dashboard</a>
+
+    </div>
+
+    <!-- RECHTS -->
+    <div class="ms-auto">
+        <button onclick="toggleDark()" class="btn btn-outline-light btn-sm">🌙</button>
+    </div>
+
+</nav>
+
+<!-- 🔥 CONTENT -->
+<div class="container mt-4">
+    <div th:replace="${content}"></div>
+</div>
+
+<!-- JS -->
+<script>
+    function toggleDark() {
+        document.getElementById("body").classList.toggle("dark");
+    }
+</script>
+
+</body>
+</html>
